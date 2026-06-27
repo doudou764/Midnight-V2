@@ -7,3 +7,12 @@ body {
   color: white;
   font-family: system-ui, sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7C3AED;
+  border-radius: 10px;
+}
