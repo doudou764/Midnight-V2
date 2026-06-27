@@ -4,7 +4,8 @@ import { useCart } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartPage() {
-  const { items, removeItem, clearCart } = useCart();
+  const { items, removeItem, clearCart, increase, decrease } =
+    useCart();
 
   const total = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -23,13 +24,28 @@ export default function CartPage() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="bg-card p-4 rounded-xl flex justify-between"
+                className="bg-card p-4 rounded-xl flex justify-between items-center"
               >
                 <div>
                   <h2 className="font-semibold">{item.name}</h2>
-                  <p className="text-gray-400">
-                    x{item.quantity}
-                  </p>
+
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      onClick={() => decrease(item.id)}
+                      className="px-2 bg-black border border-white/10"
+                    >
+                      -
+                    </button>
+
+                    <span>{item.quantity}</span>
+
+                    <button
+                      onClick={() => increase(item.id)}
+                      className="px-2 bg-black border border-white/10"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
                 <div className="text-right">
