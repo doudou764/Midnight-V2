@@ -36,3 +36,22 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ received: true });
 }
+
+import { sendOrderEmail } from "@/lib/email";
+
+if (event.type === "checkout.session.completed") {
+  const session: any = event.data.object;
+
+  const order = {
+    email: session.customer_details.email,
+    total: session.amount_total / 100
+  };
+
+  await supabase.from("orders").insert({
+    user_email: order.email,
+    total: order.total,
+    items: []
+  });
+
+  await sendOrderEmail(order.email, order);
+}
