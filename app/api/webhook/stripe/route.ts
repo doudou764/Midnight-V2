@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-06-20"
@@ -20,16 +21,17 @@ export async function POST(req: Request) {
     return new NextResponse("Webhook error", { status: 400 });
   }
 
-  // 💡 Paiement réussi
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
+    const session: any = event.data.object;
 
-    console.log("Paiement validé :", session.id);
+    const metadata = session.metadata;
 
-    // 👉 ICI tu ajouteras :
-    // - création commande Supabase
-    // - génération clé produit
-    // - email client
+    // 💾 sauvegarde commande
+    await supabase.from("orders").insert({
+      user_email: session.customer_details.email,
+      total: session.amount_total / 100,
+      items: metadata?.items ? JSON.parse(metadata.items) : []
+    });
   }
 
   return NextResponse.json({ received: true });
